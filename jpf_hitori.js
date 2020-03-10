@@ -47,28 +47,30 @@
 	
 */
 
-var allCells = [];
+var allCells;
 
-window.onload = startUp();
+window.onload = startUp;
 
 function startUp(){
     document.getElementById("puzzleTitle").innerHTML = "Puzzle 1";
     document.getElementById("puzzle").innerHTML = drawHitori(hitori1Numbers, hitori1Blocks, hitori1Rating);
-   var puzzleButtons = document.getElementsByClassName("puzzles");
-   for(var i = 0; i<puzzleButtons.length; i++){
-       puzzleButtons[i].onclick = switchPuzzle();
-   }
+   
+      var puzzleButtons = document.getElementsByClassName("puzzles");
+      for(var i = 0; i<puzzleButtons.length; i++){
+         puzzleButtons[i].onclick = switchPuzzle;
+      }
 
    setupPuzzle();
 
-   document.getElementById("check").onclick = findErrors();
-   document.getElementById("solve").onclick = showSolution();
+   document.getElementById("check").onclick = findErrors;
+   document.getElementById("solve").onclick = showSolution;
 }
 
 function switchPuzzle(e){
     if(confirm("If you switch puzzles all work will be lost")){
         var puzzleID = e.target.id;
-        document.getElementById("puzzleTitle").innerHTML = e.target.value;
+        var puzzleTitle = e.target.value;
+        document.getElementById("puzzleTitle").innerHTML = puzzleTitle;
 
         switch(puzzleID){
             case "puzzle1":
@@ -86,17 +88,64 @@ function switchPuzzle(e){
 }
 
 function setupPuzzle(){
-    var allCells = document.querySelectorAll("table#hitoriGrid td");
-    for(var i = 0; 1<allCells.length; i++){
-        allCells[i].style.backgroundColor = white;
-        allCells[i].style.color = black;
-        allCells[i].style.borderRadius = 0;
-        allCells[i].onmousedown = 
-    }
+   allCells = document.querySelectorAll("table#hitoriGrid td");
+   for(var i = 0; i<allCells.length; i++){
+      allCells[i].style.backgroundColor = 'white';
+      allCells[i].style.color = 'black';
+      allCells[i].style.borderRadius = '0px';
+      allCells[i].addEventListener("mousedown", 
+         function(e){
+            if(e.shiftKey){
+               e.style.backgroundColor = 'white';
+               e.style.color = 'black';
+               e.style.borderRadius = '0px';
+            }else if (e.altKey){
+               e.style.backgroundColor = 'black';
+               e.style.color = 'white';
+               e.style.borderRadius = '0px';
+            }else{
+               e.style.backgroundColor = 'rgb(101, 101, 101)';
+               e.style.color = 'white';
+               e.style.borderRadius = '50%';
+            }
+            e.preventDefault();
+         }
+      );
+
+      allCells[i].addEventListener("mousedown", 
+         function(e){
+            if(e.shiftKey){
+               cursorType = "url(jpf_eraser.png), alias";
+            }else if (e.altKey){
+               cursorType = "url(jpf_block.png), cell";
+            }else{
+               cursorType = "url(jpf_circle.png), pointer";
+            }
+         }
+      );
+      allCells[i].addEventListener("mouseup", checkSolution)
+   }
 }
 
-
-
+function findErrors(){
+   
+   for(var i = 0; i < allCells.length; i++){
+      if((allCells[i].className === 'blocks' && allCells[i].style.backgroundColor === 'rgb(101, 101, 101)')
+      ||
+      (allCells[i].className === 'circles' && allCells[i].style.backgroundColor === 'black')) {
+         allCells[i].style.color = 'red';
+      }
+   }
+   setTimeout(
+      function () {
+         for(var i = 0; i < allCells.length; i++){
+            if(allCells[i].style.color = "red"){
+               allCells[i].style.color = 'white';
+            }
+         }
+      }
+   , 1000);
+}
 
 
 
